@@ -1,0 +1,60 @@
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: udb-api
+  labels:
+    app.openshift.io/runtime: spring-boot
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - udb-api
+        from:
+          kind: ImageStreamTag
+          namespace: pipeline
+          name: pipelines-udb:latest
+    - type: ConfigChange
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    app: udb-api
+    deploymentconfig: udb-api
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: udb-api
+        deploymentconfig: udb-api
+    spec:
+      containers:
+        - name: udb-api
+          image: " "
+          env:
+            - name: DB_USER
+              value: jtims
+            - name: DB_PASSWORD
+              value: password
+            - name: DB_URL
+              value: jdbc:postgresql://udbapp-db-service:5432/udb
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
