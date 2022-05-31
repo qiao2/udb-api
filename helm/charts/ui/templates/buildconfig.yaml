@@ -1,0 +1,38 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: {{ .Values.deployment.name }}-buildconfig
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: {{ .Values.imageStream.name }}:{{ .Values.imageStream.tag }}
+  resources: {}
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5
+  strategy:
+    type: Docker
+    dockerStrategy:
+      env:
+        - name: UDB_SERVICE_HOST
+          value: {{ .Values.udbServiceHost }}
+      dockerfilePath: Dockerfile
+  postCommit: {}
+  source:
+    type: Git
+    git:
+      uri: {{ .Values.buildConfig.uri }}
+    contextDir: {{ .Values.buildConfig.contextDir }}
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+    - type: Generic
+      generic:
+        secretReference:
+          name: {{ .Release.namespace }}-generic-webhook-secret
+    - type: GitHub
+      github:
+        secretReference:
+          name: {{ .Release.namespace }}-github-webhook-secret
+    - type: ConfigChange
+  runPolicy: Serial

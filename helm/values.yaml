@@ -1,0 +1,46 @@
+db:
+  replicaCount: 1
+  deployment:
+    name: udbapp-db
+  imageStream:
+    namespace: openshift
+    name: postgresql
+    tag: 12-el8
+  configMap:
+    db: udb
+    username: jtims
+    password: password
+  service:
+    port: 5432
+  
+api:
+  replicaCount: 1
+  deployment:
+    name: udbapp-api
+  db: 
+    url: jdbc:postgresql://udbapp-db-service:5432/udb
+    configMap: udbapp-db-configmap
+  buildConfig:
+    uri: https://github.com/qiao2/udb.git
+    contextDir: /api
+  imageStream:
+    namespace: s2i
+    name: udb-helm
+    tag: latest
+  service:
+    port: 8080
+  
+ui:
+  replicaCount: 1
+  deployment:
+    name: udbapp-ui
+  udbServiceHost: udbapp-api-route-udb.apps-crc.testing
+  buildConfig:
+    uri: https://github.com/qiao2/udb.git
+    contextDir: /ui
+  imageStream:
+    namespace: s2i
+    name: swagger-ui-helm
+    tag: latest
+  service:
+    port: 8080
