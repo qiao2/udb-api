@@ -1,9 +1,0 @@
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: {{ .Values.deployment.name }}-configmap
-  namespace: {{ .Release.namespace }}
-data:
-  db: {{ .Values.configMap.db }}
-  password: {{ .Values.configMap.password }}
-  username: {{ .Values.configMap.username }}

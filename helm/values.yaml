@@ -18,13 +18,13 @@ api:
   deployment:
     name: udbapp-api
   db: 
-    url: jdbc:postgresql://udbapp-db-service:5432/udb
+    url: jdbc:postgresql://udb-db-service.pipeline.svc.cluster.local:5432/udb
     configMap: udbapp-db-configmap
   buildConfig:
     uri: https://github.com/qiao2/udb.git
     contextDir: /api
   imageStream:
-    namespace: s2i
+    namespace: pipeline
     name: udb-helm
     tag: latest
   service:
@@ -34,12 +34,12 @@ ui:
   replicaCount: 1
   deployment:
     name: udbapp-ui
-  udbServiceHost: udbapp-api-route-udb.apps-crc.testing
+  udbServiceHost: udb-api-service.pipeline.svc.cluster.local
   buildConfig:
     uri: https://github.com/qiao2/udb.git
     contextDir: /ui
   imageStream:
-    namespace: s2i
+    namespace: pipeline
     name: swagger-ui-helm
     tag: latest
   service:
