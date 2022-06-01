@@ -1,7 +1,7 @@
 db:
   replicaCount: 1
   deployment:
-    name: udbapp-db
+    name: udb-db
   imageStream:
     namespace: openshift
     name: postgresql
@@ -16,10 +16,10 @@ db:
 api:
   replicaCount: 1
   deployment:
-    name: udbapp-api
+    name: udb-api
   db: 
     url: jdbc:postgresql://udb-db-service.pipeline.svc.cluster.local:5432/udb
-    configMap: udbapp-db-configmap
+    configMap: udb-db-configmap
   buildConfig:
     uri: https://github.com/qiao2/udb.git
     contextDir: /api
@@ -33,7 +33,7 @@ api:
 ui:
   replicaCount: 1
   deployment:
-    name: udbapp-ui
+    name: udb-ui
   udbServiceHost: udb-api-service.pipeline.svc.cluster.local
   buildConfig:
     uri: https://github.com/qiao2/udb.git
